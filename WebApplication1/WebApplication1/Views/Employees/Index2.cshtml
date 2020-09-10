@@ -1,0 +1,129 @@
+﻿
+@{
+    ViewBag.Title = "Index2";
+}
+
+<script>
+
+    $(document).ready(function () {
+
+        var empTable =$('#employeeDetailsTable').DataTable({
+            "ajax": {
+                "url": "/Employees/GetAllEmployees",
+                "type": "POST",
+                "dataType":"json"
+            },
+            "columns":
+                [
+                    { "data": "Name", "name": "Name" },
+                    { "data": "Salary", "name": "Salary" },
+                    { "data": "DepartmentID", "name": "DepartmentID" },
+                    {     // (Edit link)
+                        "mData": "ID1",
+                        "mRender": function (data, type, full) {
+                            var id = full[0]; //row id in the first column
+                            return '<a href=' +
+                            '@Url.Action("Edit", "Employees")?id=' + data +
+                            '>Edit</a>'
+                        }
+                    }
+                ],
+            "serverSide": "true",
+             "processing": "true",
+           "stateSave": "true", // Need to add this so that return to same page after editing
+             "dom": '<"top"l>rt<"bottom"ip><"clear">',
+             "fnInitComplete": function (oSettings, json) {
+                 addSearchControl(json);
+             }
+           
+        });
+
+
+        function addSearchControl(json) {
+            $("#searchTable thead").append($("#employeeDetailsTable thead tr:first").clone());
+            $("#searchTable thead tr:eq(0) th").each(function (index) {
+                if (index != 2) {
+                    $(this).replaceWith('<th style="width: 250px;"><input class="form-control" style="align:left;" type="text"  placeholder="Search ' + $(this).html() + '"></input></th>');
+                    var searchControl = $("#searchTable thead tr:eq(0) th:eq(" + index + ") input");
+                    searchControl.on('keyup', function () {
+
+                        empTable.column(index).search(searchControl.val()).draw();
+                    });
+                }
+                else {
+                    var officeDropDown = $('<select/>');
+                    officeDropDown.append($('<option/>').attr('value', '').text('Select Department'));
+                    var office = [];
+                    $(json.data).each(function (index, element) {
+                        if ($.inArray(element.Office, office) == -1) {
+                            office.push(element.Office);
+                            officeDropDown.append($('<option/>').attr('value', element.Office).text(element.Office));
+                        }
+                    });
+                    $(this).replaceWith('<th>' + $(officeDropDown).prop('outerHTML') + '</th>');
+                    var searchControl = $("#searchTable thead tr:eq(0) th:eq(" + index + ") select");
+                    searchControl.on('change', function () {
+                        empTable.column(index).search(searchControl.val()).draw();
+                    });
+                }
+            });
+        }
+
+    });
+
+    
+
+    
+</script>
+
+<h2>Index2</h2>
+
+<button type="button" onclick="refreshDataTable()">Refresh DataTable</button>
+
+<table id="searchTable" class="ui celled table">
+    <thead></thead>
+</table>
+
+<table id="employeeDetailsTable" class="table" >
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Salary
+            </th>
+            <th>
+                DepartmentID
+            </th>
+            <th>
+                Edit
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+       
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Salary
+            </th>
+            <th>
+                DepartmentID
+            </th>
+            <th>
+                Edit
+            </th>
+        </tr>
+    </tfoot>
+</table>
+
+<button type="button" onclick="bulkUpdate()">Bulk update</button>
+
+@Html.ActionLink("Bulk update","BlukUpdate")
