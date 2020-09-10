@@ -25,16 +25,15 @@ namespace WebApplication1.Controllers
 
         public ActionResult Index2()
         {
-            
             return View();
         }
 
         
         public ActionResult BlukUpdate()
         {
-            string SearchText = Request["search[value]"];
-            int start = Convert.ToInt32(Request["start"]);
-            int length = Convert.ToInt32(Request["length"]);
+           
+
+            // Write it later
             return View();
         }
 
@@ -50,15 +49,9 @@ namespace WebApplication1.Controllers
             if (!string.IsNullOrEmpty(Request["columns[0][search][value]"]))
                 allEmp = allEmp.Where(x => x.Name.ToLower().Contains(Request["columns[0][search][value]"].ToLower())).ToList<Employee>();
             if (!string.IsNullOrEmpty(Request["columns[1][search][value]"]))
-                allEmp = allEmp.ToList<Employee>();
+                allEmp = allEmp.Where(x => x.Salary.ToString().Contains(Request["columns[0][search][value]"])).ToList<Employee>();
             if (!string.IsNullOrEmpty(Request["columns[2][search][value]"]))
-                allEmp = allEmp.ToList<Employee>();
-            if (!string.IsNullOrEmpty(Request["columns[3][search][value]"]))
-                allEmp = allEmp.ToList<Employee>();
-            if (!string.IsNullOrEmpty(Request["columns[4][search][value]"]))
-                allEmp = allEmp.ToList<Employee>();
-
-          
+                allEmp = allEmp.Where(x => x.DepartmentID.ToString().Contains(Request["columns[0][search][value]"])).ToList<Employee>();
 
             
            allEmp = allEmp.ToList().Skip(start).Take(length).ToList();
