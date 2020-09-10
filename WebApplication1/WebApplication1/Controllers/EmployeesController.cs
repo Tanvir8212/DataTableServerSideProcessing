@@ -41,7 +41,7 @@ namespace WebApplication1.Controllers
         {
             int start = Convert.ToInt32(Request["start"]);
             int length = Convert.ToInt32(Request["length"]);
-            string SearchText = Request["search[value]"];
+            //string SearchText = Request["search[value]"];
 
             List<Employee> allEmp = db.Employees.ToList();
 
